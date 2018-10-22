@@ -40,6 +40,8 @@ async function getNodeInfo(host) {
 
 
 const server = http.createServer(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+
   try {
     const [node0Info, node1Info, node2Info] = await Promise.all([
       getNodeInfo(NODE0_HOST),
