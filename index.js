@@ -1,8 +1,6 @@
 const http = require('http')
 
-const NODE0_HOST = process.env.NODE0_HOST || 'node0'
-const NODE1_HOST = process.env.NODE1_HOST || 'node1'
-const NODE2_HOST = process.env.NODE2_HOST || 'node2'
+const NODES = process.env.NODES || "node0,node2"
 
 async function getNodeInfo(host) {
   return new Promise((resolve, reject) => {
@@ -43,21 +41,13 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
 
   try {
-    const [node0Info, node1Info, node2Info] = await Promise.all([
-      getNodeInfo(NODE0_HOST),
-      getNodeInfo(NODE1_HOST),
-      getNodeInfo(NODE2_HOST),
-    ])
+    const nodeArrayInfo = await Promise.all(NODES.split(',').map(async (node) => ({ [node]: await getNodeInfo(node) })))
 
     res.writeHead(200, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({
-      node0: node0Info,
-      node1: node1Info,
-      node2: node2Info,
-    }))
+    res.end(JSON.stringify(nodeArrayInfo.reduce((prev, next, index) => Object.assign(prev, { ...next }), {})))
   } catch (e) {
     res.writeHead(500, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify({error: e.message}))
+    res.end(JSON.stringify({ error: e.message }))
   }
 })
 
