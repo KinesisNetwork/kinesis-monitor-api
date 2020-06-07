@@ -11,6 +11,6 @@ ie. `NODES='node20,node50,node60'`
 
 # Docker current version
 
-Version: abxit/kinesis-monitor:v0.0.1
+Version: abxit/kinesis-monitor:v1.0.0
 
 Ensure to update this version when deploying a new version to docker.
